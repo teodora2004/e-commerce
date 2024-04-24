@@ -23,16 +23,18 @@ This app allows users to browse, search, and purchase products conveniently.
 
 ## Installation
 1. Clone the repository:
-
+```
 git clone https://github.com/teodora2004/e-commerce.git
-
+```
 2. Navigate to the project directory:
-
+```
 cd e-commerce
+```
 
 3. Install dependencies:
-
+```
 npm install
+```
 
 4. Set up environment variables:
 
@@ -40,9 +42,9 @@ npm install
 - Add environment variables like `DATABASE_URI`, `JWT_SECRET`, `PORT`.
 
 5. Start the development server:
-
+```
 npm run dev
-
+```
 This command will concurrently run both the backend and frontend servers.
 
 Alternatively, you can run them individually:
