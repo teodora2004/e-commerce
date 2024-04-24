@@ -1,12 +1,13 @@
 import express from "express";
 import {
-  deleteUserById,
   createUser,
   loginUser,
   logoutCurrentUser,
   getAllUsers,
   getCurrentUserProfile,
   updateCurrentUserProfile,
+  deleteUser,
+  getUserById,
 } from "../controllers/userController.js";
 import { authenticate, authorizeAdmin } from "../middlewares/authMiddleware.js";
 
@@ -23,7 +24,11 @@ router.post("/logout", logoutCurrentUser);
 router
   .route("/profile")
   .get(authenticate, getCurrentUserProfile)
-  .put(authenticate, updateCurrentUserProfile)
-  .delete(authenticate, authorizeAdmin, deleteUserById);
+  .put(authenticate, updateCurrentUserProfile);
 
-  export default router;
+router
+  .route("/:id")
+  .delete(authenticate, authorizeAdmin, deleteUser)
+  .get(authenticate, authorizeAdmin, getUserById);
+  
+export default router;

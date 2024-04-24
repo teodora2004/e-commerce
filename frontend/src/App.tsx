@@ -1,12 +1,20 @@
-import './App.css'
+import 'react-toastify/dist/ReactToastify.min.css';
+import { ToastContainer, toast } from 'react-toastify';
+import "./index.css";
 
-function App() {
+import { Outlet } from "react-router-dom";
+import Navigation from "./pages/auth/navigation";
 
+const App = () => {
   return (
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
-  )
-}
+    <>
+      <ToastContainer />
+      <Navigation />
+      <main className="py-3">
+        <Outlet />
+      </main>
+    </>
+  );
+};
 
-export default App
+export default App;
