@@ -3,6 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router";
 import { useLoginMutation } from "../../redux/api/usersApiSlice";
 import Loader from "../../components/loader";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { setCredentials } from "../../redux/features/auth/authSlice";
+import Input from "../../components/input";
+import loginImage from "../../assets/login.svg";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -20,57 +25,65 @@ const Login = () => {
 
   useEffect(() => {
     if (userInfo) {
-      navigate(redirect);
+      navigate('/');
     }
   }, [navigate, redirect, userInfo]);
 
-  return (
-    <div>
-      <section className="pl-[10rem] flex flex-wrap">
-        <div className="mr-[4rem] mt-[5rem]">
-          <h1 className="text-2xl font-semibold mb-4">Sign in</h1>
-          <form className="container w-[40rem]">
-            <div className="my-[2rem]">
-              <label
-                htmlFor="email"
-                className="black text-sm font-medium text-white"
-              >
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="mt-1 p-2 border rounded w-full"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+  const submitHandler = async (e: any) => {
+    e.preventDefault();
+    try {
+      const res = await login({ email, password }).unwrap();
+      console.log(res);
+      dispatch(setCredentials({ ...res }))
+      navigate('/');
+    } catch (error: any) {
+      toast.error(error?.data?.message || error.message)
+    }
+  }
 
-            <div className="my-[2rem]">
-              <label
-                htmlFor="password"
-                className="black text-sm font-medium text-white"
-              >
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                className="mt-1 p-2 border rounded w-full"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+  return (
+    <div className="mb-10">
+      <section className="flex flex-nowrap justify-evenly">
+        <img className="w-[50%]" src={loginImage} alt="Image" />
+        <div className="">
+          <h1 className="text-2xl font-semibold mb-4 text-customLightOrange text-center">Sign in</h1>
+
+          <form onSubmit={submitHandler} className="container">
+            <Input
+              id="email"
+              type="email"
+              label="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <Input
+              id="password"
+              type="password"
+              label="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
             <button
               disabled={isLoading}
               type="submit"
-              className="bg-pink-500 text-white px-4 py-2 rounded cursor-pointer my-[1rem]"
+              className="w-[100%] bg-customPlum text-white px-4 py-2 rounded cursor-pointer my-[1rem]"
             >
               {isLoading ? "Signing In..." : "Sign In"}
             </button>
 
-            {isLoading && <Loader />}
+            <div className="h-6 text-center pt-2">
+              {isLoading && <Loader />}
+            </div>
+
+
+            <div className="mt-4 align-bottom">
+              <p className="text-black">
+                New Customer?
+                <Link to='/register' className="mx-3 text-customDarkOrange hover:underline">Register now!</Link>
+              </p>
+            </div>
           </form>
         </div>
       </section>

@@ -5,14 +5,16 @@ import {
   AiOutlineLogin,
   AiOutlineUserAdd,
   AiOutlineShoppingCart,
-  AiOutlineUser,
+  AiOutlineLogout,
+  AiOutlineClose,
 } from "react-icons/ai";
 import { FaHeart } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import "./navigation.css";
 import { useSelector, useDispatch } from "react-redux";
-import { useLoginMutation, useLogoutMutation } from "../../redux/api/usersApiSlice";
+import { useLogoutMutation } from "../../redux/api/usersApiSlice";
 import { logout } from "../../redux/features/auth/authSlice";
+import Login from "./login";
 
 
 interface NavItem {
@@ -22,21 +24,20 @@ interface NavItem {
 }
 
 const navigationItems: NavItem[] = [
-  { to: '/', icon: <AiOutlineHome className="mr-2 mt-[3rem]"  size={26} />, name: 'Home' },
-  { to: '/shop', icon: <AiOutlineShopping className="mr-2 mt-[3rem]"  size={26} />, name: 'Shop' },
-  { to: '/cart', icon: <AiOutlineShoppingCart className="mr-2 mt-[3rem]"  size={26} />, name: 'Cart' },
-  { to: '/favorite', icon: <FaHeart className="mr-2 mt-[3rem]"  size={20} />, name: 'Favorites' }
+  { to: '/', icon: <div className="mr-2 mt-[3rem]"><AiOutlineHome size={26} /></div>, name: 'Home' },
+  { to: '/shop', icon: <div className="mr-2 mt-[3rem]"><AiOutlineShopping size={26} /></div>, name: 'Shop' },
+  { to: '/cart', icon: <div className="mr-2 mt-[3rem]"><AiOutlineShoppingCart size={26} /></div>, name: 'Cart' },
+  { to: '/favorite', icon: <div className="mr-2 mt-[3rem]"><FaHeart size={20} /></div>, name: 'Favorites' }
 ]
 
 const Navigation = () => {
-  const {userInfo} = useSelector((state: any) => state.auth);
+  const { userInfo } = useSelector((state: any) => state.auth);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
 
   const [logoutApiCall] = useLogoutMutation();
 
@@ -44,77 +45,103 @@ const Navigation = () => {
     try {
       await logoutApiCall('').unwrap();
       dispatch(logout());
-      navigate("/login");
+      navigate("/");
+
     } catch (error) {
       console.error(error);
     }
   };
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
-
   return (
     <div
       style={{ zIndex: 9999 }}
-      className={`${
-        showSidebar ? "hidden" : "flex"
-      } xl:flex lg:flex md:hidden sm:hidden flex-col justify-between p-4 text-white bg-[#000] w-[6%] hover:w-[15%] h-[100vh] fixed `}
-      id="navigation-container"
+      className='xl:flex lg:flex md:hidden sm:hidden flex-col justify-between p-4 text-white bg-customPlum w-[4rem] hover:w-[15%] h-[100vh] fixed' id="navigation-container"
     >
       <div className="flex flex-col justify-center space-y-4">
-      {navigationItems.map((item, index) => (
-        <Link
-          key={index}
-          to={item.to}
-          className="flex items-center transition-transform transform hover:translate-x-2"
-        >
-          <div className="flex items-center">
-            {item.icon}
-            <span className="hidden nav-item-name mt-[3rem]">{item.name}</span>
-          </div>
-          {item.name === 'Cart' && (
-            <div className="absolute top-9">
-            {(
-              <span>
-                <span className="px-1 py-0 text-sm text-white bg-pink-500 flex rounded-full relative w-2 h-2 top-3">
-                </span>
-              </span>
+        {navigationItems.map((item, index) => (
+          <Link
+            key={index}
+            to={item.to}
+            className="flex items-center transition-transform transform hover:translate-x-2"
+          >
+            <div className="flex items-center">
+              {item.icon}
+              <span className="hidden nav-item-name mt-[3rem]">{item.name}</span>
+            </div>
+            {item.name === 'Cart' && (
+              <div className="absolute top-9">
+                {(
+                  <span>
+                    <span className="px-1 py-0 text-sm text-white bg-customLightOrange flex rounded-full relative w-2 h-2 top-3">
+                    </span>
+                  </span>
+                )}
+              </div>
             )}
-          </div>
-          )}
-        </Link>
-      ))}
-      </div>
-
-      <div className="relative">
-              <button onClick={toggleDropdown} className="flex items-center text-gray-8000 focus">
-              {userInfo ? <span className="text-white">{userInfo.username}</span> : (<></>)}
-              </button>
+          </Link>
+        ))}
       </div>
 
       <ul>
         <li>
-          <Link 
-            to='/login'
-            className="flex items-center transition-transform transform hover:translate-x-2"
-          >
-            <AiOutlineLogin className="mr-2 mt-[3rem]" size={26} />
-            <span className="hidden nav-item-name mt-[3rem]">Login</span>
+          {userInfo ?
+            <button
+              onClick={logoutHandler}
+              className="flex items-center transition-transform transform hover:translate-x-2"           >
+              <div className="flex items-center">
+                <div className="mr-2 mt-[3rem]" >
+                  <AiOutlineLogout size={26} />
+                </div>
+                <span className="hidden nav-item-name mt-[3rem]">Logout</span>
+              </div>
+            </button> : <button
+              onClick={() => setShowLoginModal(true)}
+              className="flex items-center"
+            >
+              <div className="flex items-center">
+                <div className="mr-2 mt-[3rem]">
+                  <AiOutlineLogin size={26} />
 
-          </Link>
+                </div>
+                <span className="hidden nav-item-name mt-[3rem]">Login</span>
+              </div>
+            </button>
+          }
         </li>
-        <li>
-          <Link 
-            to='/login'
-            className="flex items-center transition-transform transform hover:translate-x-2"
-          >
-            <AiOutlineUserAdd className="mr-2 mt-[3rem]" size={26} />
-            <span className="hidden nav-item-name mt-[3rem]">Register</span>
-          </Link>
-        </li>
+        {!userInfo &&
+          <li>
+            <Link
+              to='/register'
+              className="flex items-center transition-transform transform hover:translate-x-2"
+            >
+              <div className="flex items-center">
+                <div className="mr-2 mt-[3rem]" >
+                  <AiOutlineUserAdd size={26} />
+                </div>
+                <span className="hidden nav-item-name mt-[3rem]">Register</span>
+              </div>
+            </Link>
+          </li>}
       </ul>
-  
+
+      {showLoginModal && (
+        <>
+          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+            <div className="relative w-auto my-6 mx-auto max-w-3xl">
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                <div className="flex items-start justify-between p-1 rounded-t">
+                  <h3 className="text-3xl font-semibold">Modal Title</h3>
+                  <button className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none" onClick={() => setShowLoginModal(false)}>
+                    <AiOutlineClose size={25} />
+                  </button>
+                </div>
+                <Login />
+              </div>
+            </div>
+          </div>
+          <div className="backdrop-filter backdrop-blur-sm md:backdrop-blur-lg fixed inset-0 z-40"></div>
+        </>
+      )}
     </div>
   );
 };
