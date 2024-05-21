@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router";
-import { useLoginMutation } from "../../redux/api/usersApiSlice";
-import Loader from "../../components/loader";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { setCredentials } from "../../redux/features/auth/authSlice";
-import Input from "../../components/input";
-import loginImage from "../../assets/login.svg";
+import loginImage from "../assets/login.svg";
+import { useLoginMutation } from "../redux/api/usersApiSlice";
+import { setCredentials } from "../redux/features/auth/authSlice";
+import Input from "./input";
+import Loader from "./loader";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -56,7 +55,6 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-
             <Input
               id="password"
               type="password"
@@ -75,14 +73,6 @@ const Login = () => {
 
             <div className="h-6 text-center pt-2">
               {isLoading && <Loader />}
-            </div>
-
-
-            <div className="mt-4 align-bottom">
-              <p className="text-black">
-                New Customer?
-                <Link to='/register' className="mx-3 text-customDarkOrange hover:underline">Register now!</Link>
-              </p>
             </div>
           </form>
         </div>
